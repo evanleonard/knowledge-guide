@@ -25,12 +25,19 @@ echo -e "${BOLD}${CYAN}=========================================================
 # 1. Run standard idempotent setup (environment, permissions, hooks, bundle test)
 ./setup.sh "$@"
 
-# 2. Check for Antigravity desktop application
+# 2. Check for applications
 HAS_ANTIGRAVITY=0
 if [ -d "/Applications/Antigravity.app" ] || [ -d "$HOME/Applications/Antigravity.app" ]; then
     HAS_ANTIGRAVITY=1
 elif command -v antigravity &>/dev/null; then
     HAS_ANTIGRAVITY=1
+fi
+
+HAS_OBSIDIAN=0
+if [ -d "/Applications/Obsidian.app" ] || [ -d "$HOME/Applications/Obsidian.app" ]; then
+    HAS_OBSIDIAN=1
+elif command -v obsidian &>/dev/null; then
+    HAS_OBSIDIAN=1
 fi
 
 # 3. Present the 4 Golden Test-Drive Prompts
@@ -67,4 +74,8 @@ else
     echo -e "\n${YELLOW}To install the free Antigravity desktop app:${NC}"
     echo -e "  • Download (.dmg):      ${BOLD}https://antigravity.google/download${NC}"
     echo -e "  • Or macOS Homebrew:    ${BOLD}brew install --cask antigravity${NC}\n"
+fi
+
+if [ "$HAS_OBSIDIAN" -eq 1 ]; then
+    echo -e "  • Open in Obsidian:     ${BOLD}open -a Obsidian .${NC} (or open vault in Obsidian)\n"
 fi

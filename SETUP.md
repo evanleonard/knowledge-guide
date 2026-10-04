@@ -115,7 +115,7 @@ Ensure you have the following installed on your machine:
   * Direct installer: [antigravity.google/download](https://antigravity.google/download)
   * macOS Homebrew: `brew install --cask antigravity`
 * *(Optional)* **Jujutsu (jj)**: A modern Git-compatible version control tool (`brew install jj` or `cargo install jujutsu`).
-* *(Optional)* **Obsidian**: For rich graph visualization and knowledge browsing.
+* *(Optional)* **Obsidian**: For rich graph visualization and knowledge browsing. `setup.sh` automatically detects Obsidian and configures the Antigravity Obsidian plugin (`.obsidian/plugins/antigravity`). Use `--no-obsidian` to skip Obsidian setup.
 
 ### 2. Single-Command Setup & Test Drive
 ```bash
@@ -123,7 +123,16 @@ git clone https://github.com/evanleonard/knowledge-guide.git
 cd knowledge-guide
 ./quickstart.sh
 ```
-*(Or open the Antigravity desktop app and choose **Open Project** $\rightarrow$ `knowledge-guide`)*
+*(Or open the Antigravity desktop app or Obsidian and choose **Open Project / Open Vault** $\rightarrow$ `knowledge-guide`)*
+
+#### Optional Setup Flags
+```bash
+./setup.sh --help               # Show all options
+./setup.sh -y                   # Non-interactive automated install
+./setup.sh --no-obsidian        # Skip Obsidian checks and plugin configuration
+./setup.sh --with-obsidian      # Ensure Obsidian integration and Antigravity plugin are enabled
+./setup.sh --install-obsidian   # Auto-install Obsidian via Homebrew if missing
+```
 
 ---
 

@@ -241,8 +241,10 @@ sources:                     # Optional: Provenance citations
 
 This repository is ready to open directly in [Obsidian](https://obsidian.md/):
 * `.obsidian/app.json` is configured for standard markdown links (`useMarkdownLinks: true`).
-* `.obsidian/community-plugins.json` is configured for `obsidian-git` auto-sync.
+* `.obsidian/plugins/antigravity` provides autonomous vault management and agentic intelligence inside Obsidian.
+* `.obsidian/community-plugins.json` is configured with `antigravity` and `obsidian-git`.
 * Interactive graph view visualizes cross-references between `/systems/`, `/ecosystem/`, and `/concepts/` out of the box.
+* Supported by `./setup.sh` with flexible flags (`--with-obsidian`, `--no-obsidian`).
 
 ---
 

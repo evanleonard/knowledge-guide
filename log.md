@@ -1,6 +1,10 @@
 # Knowledge Base Changelog
 
 ## 2026-10-04
+* **Obsidian & Antigravity Plugin Integration**:
+  - **Bundled Plugin**: Installed the Antigravity Obsidian plugin into [`.obsidian/plugins/antigravity`](/.obsidian/plugins/antigravity) and registered it in [`.obsidian/community-plugins.json`](/.obsidian/community-plugins.json) for instant out-of-the-box agentic vault intelligence.
+  - **Fault-Tolerant Setup & Flexible Flags**: Enhanced [`setup.sh`](/setup.sh) and [`quickstart.sh`](/quickstart.sh) to detect Obsidian and configure the plugin with graceful opt-out flags (`--no-obsidian`), explicit opt-in (`--with-obsidian`), automated installation (`--install-obsidian`), and non-interactive safeguards.
+  - **Documentation Updated**: Reflected Obsidian vault plugin integration in [`SETUP.md`](/SETUP.md) and [`README.md`](/README.md).
 * **Plain Language Publishing, Sharing & Content Checking**:
   - **Publish & Share Engine**: Added [`scripts/publish_changes.py`](/scripts/publish_changes.py) translating everyday phrases like *"share my changes"*, *"publish my updates"*, *"save and share"*, *"push my notes"*, and *"publish this page"* into verified Git commits and pushes with presubmit gatekeeping and automatic conflict-free teammate sync.
   - **Content & Team Updates Checker**: Added [`scripts/check_changes.py`](/scripts/check_changes.py) providing non-technical inspection of collaborator commits on `origin/main`, local working drafts, and recent changelog additions in `log.md` without Git jargon.
