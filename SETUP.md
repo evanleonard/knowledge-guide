@@ -147,6 +147,19 @@ A gatekeeper script that runs before any commit or push:
 python3 scripts/validate.py --fix
 ```
 
+### Upstream Upgrades & Sync (`scripts/upgrade_guide.py`)
+Non-technical team members can upgrade the knowledge base software, tooling, and skills at any time without touching git:
+* **In Antigravity Chat**: Just say *"upgrade the guide"*, *"upgrade version"*, or *"update system"*. The agent will check for updates, ask for confirmation, and apply everything cleanly.
+* **Via Terminal**:
+  ```bash
+  # Check for upstream updates:
+  ./scripts/upgrade_guide.py --check
+
+  # Apply updates and install new dependencies:
+  ./scripts/upgrade_guide.py --apply
+  ```
+
+
 ---
 
 ## 🧭 How to Work With the Knowledge Base
