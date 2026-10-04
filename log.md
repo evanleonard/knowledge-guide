@@ -1,6 +1,10 @@
 # Knowledge Base Changelog
 
 ## 2026-10-04
+* **Plain Language Publishing, Sharing & Content Checking**:
+  - **Publish & Share Engine**: Added [`scripts/publish_changes.py`](/scripts/publish_changes.py) translating everyday phrases like *"share my changes"*, *"publish my updates"*, *"save and share"*, *"push my notes"*, and *"publish this page"* into verified Git commits and pushes with presubmit gatekeeping and automatic conflict-free teammate sync.
+  - **Content & Team Updates Checker**: Added [`scripts/check_changes.py`](/scripts/check_changes.py) providing non-technical inspection of collaborator commits on `origin/main`, local working drafts, and recent changelog additions in `log.md` without Git jargon.
+  - **Skill Scope Demarcation**: Clarified [`skills/upgrade-guide`](/skills/upgrade-guide/SKILL.md) to trigger strictly on platform software/tooling upgrades from upstream, while [`skills/manage-knowledge-base`](/skills/manage-knowledge-base/SKILL.md) handles content changes and collaborative sharing.
 * **Upstream Upgrade Engine & Skill Added**:
   - **Skill Created**: Implemented [`skills/upgrade-guide`](/skills/upgrade-guide/SKILL.md) enabling non-technical users to upgrade the knowledge base software, tooling, and skills by simply saying "upgrade the guide", "upgrade version", or "update system". Includes interactive confirmation modal (`ask_question`), zero-git-knowledge abstraction, automated dependency installation, and bundle re-verification. Registered `/upgrade-guide` in [`AGENTS.md`](/AGENTS.md) and [`SETUP.md`](/SETUP.md).
   - **Automated Sync Engine**: Developed [`scripts/upgrade_guide.py`](/scripts/upgrade_guide.py) with `--check` preview and `--apply` safe update mechanisms, safeguarding uncommitted local drafts via stash, preserving local configurations (`knowledge.config.json`), running `setup.sh` to install new dependencies, and executing presubmit validation.

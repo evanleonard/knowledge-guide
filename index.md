@@ -56,7 +56,7 @@ Knowledge in this bundle is organized with clear demarcation between:
 * [Ingest URL Content into Knowledge Base](/skills/ingest/SKILL.md) - Downloads external web content from a URL, analyzes its relevance to the organization, asks the user for placement confirmation, and synthesizes it into an OKF v0.2 knowledge document.
 * [Article or Policy Title](/skills/ingest/templates/ingested-source-template.md) - Single-sentence executive summary of the ingested document and its organizational relevance.
 * [YouTube Video or Presentation Title](/skills/ingest/templates/ingested-youtube-template.md) - Single-sentence executive summary of the video presentation, lecture, or interview.
-* [Manage Knowledge Base (OKF v0.2)](/skills/manage-knowledge-base/SKILL.md) - Navigate, read, author, update, and validate the markdown knowledge base according to Google OKF v0.2.
+* [Manage Knowledge Base (OKF v0.2)](/skills/manage-knowledge-base/SKILL.md) - Navigate, read, author, update, validate, check for team updates, or publish and share changes in the markdown knowledge base according to Google OKF v0.2. Trigger on 'check for changes', 'what changed', 'what's new', 'sync team notes', 'share my changes', 'publish my updates', 'save and share', 'publish this page', 'push notes', 'validate bundle', or when authoring and organizing markdown documentation.
 * [Google OKF v0.2 Quick Reference Cheat Sheet](/skills/manage-knowledge-base/references/okf_cheat_sheet.md) - Reference cheat sheet for Open Knowledge Format frontmatter fields and conventions.
 * [Concept Cluster Template](/skills/manage-knowledge-base/templates/concept_cluster_template.md) - Starter template for organizing a thematic cluster of interrelated concepts, their constituent nodes, cross-cutting edges, and institutional groundings.
 * [Concept Title](/skills/manage-knowledge-base/templates/concept_template.md) - Single-sentence summary of this conceptual thesis, architectural RFC, or product exploration.
@@ -64,7 +64,7 @@ Knowledge in this bundle is organized with clear demarcation between:
 * [Institution Dossier Template](/skills/manage-knowledge-base/templates/institution_template.md) - Starter template for profiling external research institutes, frontier labs, university centers, and standards bodies ('What Is').
 * [Interview / Field Notes Template](/skills/manage-knowledge-base/templates/interview_template.md) - Starter template for recording qualitative customer research and provenance.
 * [Playbook Template](/skills/manage-knowledge-base/templates/playbook_template.md) - Starter template for an operational runbook or SOP.
-* [Upgrade Knowledge Guide](/skills/upgrade-guide/SKILL.md) - Upgrades the local knowledge base software, skills, and tooling to the latest version from the upstream knowledge-guide repository without requiring git or github knowledge. Trigger on 'upgrade the guide', 'upgrade version', 'update system', 'update guide', or 'sync upstream'.
+* [Upgrade Knowledge Guide](/skills/upgrade-guide/SKILL.md) - Upgrades the underlying platform software, skills, and tooling from the upstream knowledge-guide repository without requiring git knowledge. Trigger ONLY on software upgrades like 'upgrade the guide', 'upgrade version', 'update system', or 'upgrade software'. Do NOT trigger on 'check for changes' or 'what changed' (use manage-knowledge-base for knowledge base content updates).
 
 ## Standards, Specifications & References
 
