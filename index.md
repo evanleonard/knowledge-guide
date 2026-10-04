@@ -64,6 +64,7 @@ Knowledge in this bundle is organized with clear demarcation between:
 * [Institution Dossier Template](/skills/manage-knowledge-base/templates/institution_template.md) - Starter template for profiling external research institutes, frontier labs, university centers, and standards bodies ('What Is').
 * [Interview / Field Notes Template](/skills/manage-knowledge-base/templates/interview_template.md) - Starter template for recording qualitative customer research and provenance.
 * [Playbook Template](/skills/manage-knowledge-base/templates/playbook_template.md) - Starter template for an operational runbook or SOP.
+* [Upgrade Knowledge Guide](/skills/upgrade-guide/SKILL.md) - Upgrades the local knowledge base software, skills, and tooling to the latest version from the upstream knowledge-guide repository without requiring git or github knowledge. Trigger on 'upgrade the guide', 'upgrade version', 'update system', 'update guide', or 'sync upstream'.
 
 ## Standards, Specifications & References
 

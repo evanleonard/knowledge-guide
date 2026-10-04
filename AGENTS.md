@@ -69,6 +69,7 @@ When interacting with the user or executing complex tasks, use these registered 
 * `/generate-storyboards`: Author multi-panel visual storyboards and product concept specifications.
 * `/backout-source <target>`: Audit, retract, substitute, or decouple any external source, paper, or institutional container.
 * `/backout-institution <name>`: Audit, retract, and safely decouple an institution, its sources, and dependent concepts.
+* `/upgrade-guide`: Upgrade the knowledge base software, tooling, skills, and dependencies from the upstream repository without requiring git knowledge.
 
 ---
 
