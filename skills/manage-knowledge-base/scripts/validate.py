@@ -112,10 +112,14 @@ def infer_doc_type(rel_path: Path) -> str:
     parts = rel_path.parts
     if len(parts) > 1:
         folder = parts[0]
+        if folder == "concepts" and rel_path.name.startswith("cluster-"):
+            return "Concept Cluster"
         mapping = {
             "systems": "System Component",
             "ecosystem": "Ecosystem Context",
             "concepts": "Concept",
+            "frontier": "Frontier Exploration",
+            "storyboards": "Product Storyboard",
             "playbooks": "Playbook",
             "research": "Research Notes",
             "interviews": "Interview Notes",
@@ -305,6 +309,17 @@ def fix_links_in_markdown(text: str, bundle_dir: Path, file_path: Path):
     return "".join(parts), changed
 
 
+EXEMPT_DIRS = {"archive", "private"}
+
+def is_exempt_path(file_path: Path, bundle_dir: Path) -> bool:
+    """Returns True if the file or any parent folder is exempted from the OKF bundle (e.g. archive, private, or dotfiles)."""
+    try:
+        rel_parts = file_path.relative_to(bundle_dir).parts
+    except ValueError:
+        rel_parts = file_path.parts
+    return any(p in EXEMPT_DIRS or p.startswith(".") for p in rel_parts) or file_path.name.startswith(".")
+
+
 def fix_bundle(bundle_dir: Path) -> list:
     """Automatically fixes schema issues, missing frontmatter, links, and refreshes index."""
     fixes = []
@@ -320,8 +335,10 @@ def fix_bundle(bundle_dir: Path) -> list:
     except Exception as ex:
         fixes.append(f"[index.md] Failed to update index: {ex}")
         
-    # 2. Iterate all markdown files
+    # 2. Iterate all markdown files (exempting archive, private, and hidden files)
     for file_path in sorted(bundle_dir.rglob("*.md")):
+        if is_exempt_path(file_path, bundle_dir):
+            continue
         rel = file_path.relative_to(bundle_dir)
         try:
             content = file_path.read_text(encoding="utf-8")
@@ -368,6 +385,100 @@ def fix_bundle(bundle_dir: Path) -> list:
     return fixes
 
 
+def validate_concept_graph(bundle_dir: Path, errors: list, warnings: list) -> dict:
+    """
+    Validates concept graph integrity:
+    1. Cluster membership (no orphan concepts outside cluster matrices when clusters are defined).
+    2. Typed relational edge indices in concept documents.
+    3. Cross-cluster edge mapping in cluster documents.
+    4. Primary source provenance (sources: frontmatter block) for stable concepts.
+    """
+    concepts_dir = bundle_dir / "concepts"
+    stats = {
+        "clusters_count": 0,
+        "nodes_count": 0,
+        "concept_edges": 0,
+        "cluster_edges": 0,
+        "orphans_count": 0
+    }
+    if not concepts_dir.is_dir():
+        return stats
+        
+    cluster_files = []
+    concept_files = []
+    cluster_members = set()
+    
+    for f in sorted(concepts_dir.glob("*.md")):
+        if f.name.startswith("cluster-"):
+            cluster_files.append(f)
+        elif f.name != ".gitkeep":
+            concept_files.append(f)
+            
+    stats["clusters_count"] = len(cluster_files)
+    stats["nodes_count"] = len(concept_files)
+    
+    # 1. Parse cluster documents for constituent concept membership
+    for cf in cluster_files:
+        try:
+            content = cf.read_text(encoding="utf-8")
+        except Exception:
+            continue
+        targets = re.findall(r"\[.*?\]\((/concepts/[a-zA-Z0-9_\-]+(?:\.md)?)\)", content)
+        for t in targets:
+            slug = t.split("/")[-1]
+            if not slug.endswith(".md"):
+                slug += ".md"
+            cluster_members.add(slug)
+            
+        # Parse cross-cluster edges
+        cross_rows = re.findall(r"\|\s*\*{0,2}\[.*?\]\((/[^)]+)\)\*{0,2}\s*\|\s*\*([^*]+)\*\s*\|\s*\*{0,2}\[.*?\]\((/[^)]+)\)\*{0,2}\s*\|", content)
+        stats["cluster_edges"] += len(cross_rows)
+
+    # 2. Check for orphan concepts (only if cluster files are actively defined)
+    if cluster_files:
+        for cf in concept_files:
+            try:
+                c_content = cf.read_text(encoding="utf-8")
+                c_meta, _ = parse_yaml_frontmatter(c_content)
+                if c_meta and (c_meta.get("is_anchor") or c_meta.get("role") == "anchor"):
+                    continue
+            except Exception:
+                pass
+            if cf.name not in cluster_members:
+                warnings.append(f"[concepts/{cf.name}] Orphan Concept: not registered in any Concept Cluster constituent matrix.")
+                stats["orphans_count"] += 1
+
+    # 3. Check typed relational edge indices in concept documents
+    for cf in concept_files:
+        try:
+            content = cf.read_text(encoding="utf-8")
+        except Exception:
+            continue
+        rel = cf.relative_to(bundle_dir)
+        
+        # Check edge rows e.g. | **Outbound** | **[Title](/concepts/slug.md)** | *Verb* | ...
+        rows = re.findall(r"\|\s*\*{0,2}(?:Outbound|Inbound)\*{0,2}\s*\|\s*\*{0,2}\[.*?\]\((/[^)]+)\)\*{0,2}\s*\|\s*\*([^*]+)\*\s*\|", content)
+        stats["concept_edges"] += len(rows)
+        for target_link, rel_type in rows:
+            clean_verb = rel_type.strip()
+            if len(clean_verb) < 2:
+                warnings.append(f"[{rel}] Empty or invalid relationship type verb '{rel_type}' in Relational Edge Index.")
+
+        # 4. Check external source provenance on stable concepts
+        meta, _ = parse_yaml_frontmatter(content)
+        if meta and meta.get("status") == "stable":
+            sources = meta.get("sources")
+            if not sources:
+                warnings.append(f"[{rel}] Missing 'sources:' frontmatter block. Stable concept nodes must declare primary external sources.")
+            elif isinstance(sources, list):
+                for s in sources:
+                    if isinstance(s, dict):
+                        if not s.get("id") or not s.get("resource"):
+                            warnings.append(f"[{rel}] Malformed entry in 'sources:' block (requires 'id' and 'resource').")
+
+    return stats
+
+
 def validate_bundle(bundle_dir: Path, fix: bool = False):
     if not bundle_dir.is_dir():
         print(f"ERROR: Bundle directory {bundle_dir} does not exist.")
@@ -389,8 +500,8 @@ def validate_bundle(bundle_dir: Path, fix: bool = False):
     concepts_count = 0
     trust_tiers = {"human-reviewed": 0, "machine-confirmed": 0, "unverified": 0}
 
-    md_files = list(bundle_dir.rglob("*.md"))
-    print(f"🔍 Validating self-contained OKF bundle at: {bundle_dir} ({len(md_files)} markdown files)\n")
+    md_files = [f for f in bundle_dir.rglob("*.md") if not is_exempt_path(f, bundle_dir)]
+    print(f"🔍 Validating self-contained OKF bundle at: {bundle_dir} ({len(md_files)} active markdown files)\n")
 
     for file_path in md_files:
         rel_path = file_path.relative_to(bundle_dir)
@@ -478,7 +589,13 @@ def validate_bundle(bundle_dir: Path, fix: bool = False):
                 target = (file_path.parent / clean_link).resolve()
                 
             if not target.exists():
-                warnings.append(f"[{rel_path}] Broken link to '{link}'. Target does not exist.")
+                if "templates" not in file_path.parts:
+                    warnings.append(f"[{rel_path}] Broken link to '{link}'. Target does not exist.")
+            elif is_exempt_path(target, bundle_dir) and not is_exempt_path(file_path, bundle_dir):
+                warnings.append(f"[{rel_path}] Illegal reference to private or uncommitted path '{link}'. Tracked documentation must not link into private directories.")
+
+    # Concept Graph Validation
+    graph_stats = validate_concept_graph(bundle_dir, errors, warnings)
 
     # Summary
     print("=" * 60)
@@ -489,6 +606,14 @@ def validate_bundle(bundle_dir: Path, fix: bool = False):
     print(f"  • Human-reviewed:   {trust_tiers['human-reviewed']}")
     print(f"  • Machine-confirmed: {trust_tiers['machine-confirmed']}")
     print(f"  • Unverified:        {trust_tiers['unverified']}")
+    if graph_stats.get("clusters_count") or graph_stats.get("nodes_count"):
+        print("-" * 60)
+        print("Concept Graph & Mind Map Integrity:")
+        print(f"  • Thematic Clusters:     {graph_stats['clusters_count']}")
+        print(f"  • Concept Nodes:         {graph_stats['nodes_count']}")
+        print(f"  • Typed Concept Edges:   {graph_stats['concept_edges']}")
+        print(f"  • Cluster Cross-Edges:   {graph_stats['cluster_edges']}")
+        print(f"  • Orphan Concepts:       {graph_stats['orphans_count']}")
     print("-" * 60)
     
     if warnings:

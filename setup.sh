@@ -168,8 +168,7 @@ if [ -d ".git" ]; then
     cat << 'EOF' > .git/hooks/pre-commit
 #!/usr/bin/env bash
 set -euo pipefail
-GIT_DIR="$(git rev-parse --git-dir)"
-REPO_ROOT="$(cd "$GIT_DIR/.." && pwd)"
+REPO_ROOT="$(git rev-parse --show-toplevel)"
 PYTHON_BIN=""
 if command -v python3 &>/dev/null; then
     PYTHON_BIN="python3"
@@ -187,8 +186,7 @@ EOF
     cat << 'EOF' > .git/hooks/pre-push
 #!/usr/bin/env bash
 set -euo pipefail
-GIT_DIR="$(git rev-parse --git-dir)"
-REPO_ROOT="$(cd "$GIT_DIR/.." && pwd)"
+REPO_ROOT="$(git rev-parse --show-toplevel)"
 PYTHON_BIN=""
 if command -v python3 &>/dev/null; then
     PYTHON_BIN="python3"

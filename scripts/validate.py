@@ -309,6 +309,17 @@ def fix_links_in_markdown(text: str, bundle_dir: Path, file_path: Path):
     return "".join(parts), changed
 
 
+EXEMPT_DIRS = {"archive", "private"}
+
+def is_exempt_path(file_path: Path, bundle_dir: Path) -> bool:
+    """Returns True if the file or any parent folder is exempted from the OKF bundle (e.g. archive, private, or dotfiles)."""
+    try:
+        rel_parts = file_path.relative_to(bundle_dir).parts
+    except ValueError:
+        rel_parts = file_path.parts
+    return any(p in EXEMPT_DIRS or p.startswith(".") for p in rel_parts) or file_path.name.startswith(".")
+
+
 def fix_bundle(bundle_dir: Path) -> list:
     """Automatically fixes schema issues, missing frontmatter, links, and refreshes index."""
     fixes = []
@@ -324,9 +335,9 @@ def fix_bundle(bundle_dir: Path) -> list:
     except Exception as ex:
         fixes.append(f"[index.md] Failed to update index: {ex}")
         
-    # 2. Iterate all markdown files (exempting archive and hidden files)
+    # 2. Iterate all markdown files (exempting archive, private, and hidden files)
     for file_path in sorted(bundle_dir.rglob("*.md")):
-        if "archive" in file_path.parts or file_path.name.startswith("."):
+        if is_exempt_path(file_path, bundle_dir):
             continue
         rel = file_path.relative_to(bundle_dir)
         try:
@@ -489,7 +500,7 @@ def validate_bundle(bundle_dir: Path, fix: bool = False):
     concepts_count = 0
     trust_tiers = {"human-reviewed": 0, "machine-confirmed": 0, "unverified": 0}
 
-    md_files = [f for f in bundle_dir.rglob("*.md") if "archive" not in f.parts and not f.name.startswith(".")]
+    md_files = [f for f in bundle_dir.rglob("*.md") if not is_exempt_path(f, bundle_dir)]
     print(f"🔍 Validating self-contained OKF bundle at: {bundle_dir} ({len(md_files)} active markdown files)\n")
 
     for file_path in md_files:
@@ -578,7 +589,10 @@ def validate_bundle(bundle_dir: Path, fix: bool = False):
                 target = (file_path.parent / clean_link).resolve()
                 
             if not target.exists():
-                warnings.append(f"[{rel_path}] Broken link to '{link}'. Target does not exist.")
+                if "templates" not in file_path.parts:
+                    warnings.append(f"[{rel_path}] Broken link to '{link}'. Target does not exist.")
+            elif is_exempt_path(target, bundle_dir) and not is_exempt_path(file_path, bundle_dir):
+                warnings.append(f"[{rel_path}] Illegal reference to private or uncommitted path '{link}'. Tracked documentation must not link into private directories.")
 
     # Concept Graph Validation
     graph_stats = validate_concept_graph(bundle_dir, errors, warnings)

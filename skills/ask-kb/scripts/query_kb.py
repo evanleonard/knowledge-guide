@@ -43,6 +43,10 @@ def search_kb(bundle_dir: Path, query: str, category: str = None, limit: int = 5
         if file_path.name in ["index.md", "log.md"]:
             continue
             
+        rel_parts = file_path.relative_to(bundle_dir).parts
+        if any(p in {"archive", "private"} or p.startswith(".") for p in rel_parts) or file_path.name.startswith("."):
+            continue
+            
         rel_path = file_path.relative_to(bundle_dir).as_posix()
         
         if category and not rel_path.startswith(category):

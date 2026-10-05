@@ -40,12 +40,19 @@ The single source of truth for all architectural, statutory, and operational req
    * Client applications and prototypes must degrade gracefully during intermittent network connectivity, using optimistic updates and local caching.
 4. **Idempotency**:
    * Mutating operations must support idempotent request tokens to prevent duplicate side effects on retries.
+5. **Private Data Quarantine (`private/`)**:
+   * The `private/` directory is strictly reserved for local, uncommitted user content (e.g., personal notes, local case histories, proprietary interview transcripts, local scratchpads, or private credentials).
+   * **Zero Git Staging**: Agents MUST NEVER stage (`git add`), commit, or push any files or directories in `private/`.
+   * **No Public References**: Agents MUST NOT add links into `private/` from tracked documentation (`systems/`, `concepts/`, `ecosystem/`, `playbooks/`, etc.).
+   * **Confidentiality Invariant**: Never disclose, summarize, or quote private content from `private/` into tracked documentation, commit messages, or pull requests.
+   * **Local Assistant Support**: When instructed by the user, agents may read, synthesize, and analyze files within `private/`—keeping all derived private notes strictly inside `private/` or inline in chat.
 
 ---
 
 ## 3. Workspace Layout
 
 * `index.md`: Root progressive disclosure index listing all categorized documents.
+* `private/`: [UNCOMMITTED] Local personal notes, case histories, proprietary research data, and scratchpads (gitignored and excluded from OKF bundle validation, indexing, and commit gates).
 * `systems/`: "What Is" — Active production software, services, schemas, and workflows.
 * `ecosystem/`: "What Is" — External regulatory environment, key institutions (`ecosystem/institutions/`), standards, partner rails.
 * `concepts/`: Theoretical ideas, architectural constructs, thematic clusters, foundational models.

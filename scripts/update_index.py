@@ -99,6 +99,17 @@ def load_config(bundle_dir: Path) -> dict:
     return DEFAULT_CONFIG
 
 
+EXEMPT_DIRS = {"archive", "private"}
+
+def is_exempt_path(file_path: Path, bundle_dir: Path) -> bool:
+    """Returns True if the file or any parent folder is exempted from the OKF bundle (e.g. archive, private, or dotfiles)."""
+    try:
+        rel_parts = file_path.relative_to(bundle_dir).parts
+    except ValueError:
+        rel_parts = file_path.parts
+    return any(p in EXEMPT_DIRS or p.startswith(".") for p in rel_parts) or file_path.name.startswith(".")
+
+
 def generate_index(bundle_dir: Path):
     cfg = load_config(bundle_dir)
     categories_cfg = cfg.get("categories", DEFAULT_CONFIG["categories"])
@@ -107,9 +118,9 @@ def generate_index(bundle_dir: Path):
     category_buckets = {c["id"]: [] for c in categories_cfg}
     unmapped_items = []
     
-    # Scan all markdown files (exempting archive and hidden files)
+    # Scan all markdown files (exempting archive, private, and hidden files)
     for file_path in sorted(bundle_dir.rglob("*.md")):
-        if "archive" in file_path.parts or file_path.name.startswith("."):
+        if is_exempt_path(file_path, bundle_dir):
             continue
         if file_path.name in ["index.md", "log.md"]:
             continue
