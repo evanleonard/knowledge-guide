@@ -589,6 +589,8 @@ def validate_bundle(bundle_dir: Path, fix: bool = False):
                 target = (file_path.parent / clean_link).resolve()
                 
             if not target.exists():
+                # Starter templates and skill templates contain illustrative example links for authors;
+                # exempt templates from target existence checks to prevent false positives when samples are removed.
                 if "templates" not in file_path.parts:
                     warnings.append(f"[{rel_path}] Broken link to '{link}'. Target does not exist.")
             elif is_exempt_path(target, bundle_dir) and not is_exempt_path(file_path, bundle_dir):
