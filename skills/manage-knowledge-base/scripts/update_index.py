@@ -8,6 +8,7 @@ by categorized paths and frontmatter, producing a clean progressive-disclosure i
 
 import sys
 import json
+import argparse
 from pathlib import Path
 
 # Add script dir to path to import validate's frontmatter parser
@@ -39,6 +40,18 @@ DEFAULT_CONFIG = {
             "title": "Product Concepts & Explorations ('What Could Be')",
             "path_prefix": "concepts/",
             "description": "Proposed features, architectural RFCs, exploratory initiatives, and future innovations."
+        },
+        {
+            "id": "frontier",
+            "title": "Frontier & Emerging Ideas ('What Could Be')",
+            "path_prefix": "frontier/",
+            "description": "Exploratory horizon-scanning initiatives, emerging prototypes, experimental ideas, and nascent proposals."
+        },
+        {
+            "id": "storyboards",
+            "title": "Visual Storyboards & User Journeys ('What Could Be')",
+            "path_prefix": "storyboards/",
+            "description": "Sequential visual narrative storyboards illustrating product features, user journeys, and partner integrations."
         },
         {
             "id": "playbooks",
@@ -86,6 +99,17 @@ def load_config(bundle_dir: Path) -> dict:
     return DEFAULT_CONFIG
 
 
+EXEMPT_DIRS = {"archive", "private"}
+
+def is_exempt_path(file_path: Path, bundle_dir: Path) -> bool:
+    """Returns True if the file or any parent folder is exempted from the OKF bundle (e.g. archive, private, or dotfiles)."""
+    try:
+        rel_parts = file_path.relative_to(bundle_dir).parts
+    except ValueError:
+        rel_parts = file_path.parts
+    return any(p in EXEMPT_DIRS or p.startswith(".") for p in rel_parts) or file_path.name.startswith(".")
+
+
 def generate_index(bundle_dir: Path):
     cfg = load_config(bundle_dir)
     categories_cfg = cfg.get("categories", DEFAULT_CONFIG["categories"])
@@ -94,8 +118,10 @@ def generate_index(bundle_dir: Path):
     category_buckets = {c["id"]: [] for c in categories_cfg}
     unmapped_items = []
     
-    # Scan all markdown files
+    # Scan all markdown files (exempting archive, private, and hidden files)
     for file_path in sorted(bundle_dir.rglob("*.md")):
+        if is_exempt_path(file_path, bundle_dir):
+            continue
         if file_path.name in ["index.md", "log.md"]:
             continue
             
@@ -154,9 +180,10 @@ def generate_index(bundle_dir: Path):
         f"{desc}",
         "",
         "Knowledge in this bundle is organized with clear demarcation between:",
-        "1. **\"What Is\"**: Operational realities, external ecosystem context (`/ecosystem/`), and active production systems (`/systems/`).",
-        "2. **\"What Could Be\"**: Future proposals, feature specifications, and architectural explorations (`/concepts/`).",
-        "3. **\"How To\" & Provenance**: Operational runbooks (`/playbooks/`), field research (`/research/`), and standards (`/references/`).",
+        "1. **\"What Is\"**: Operational realities, external ecosystem context (`/ecosystem/`), key institutions (`/ecosystem/institutions/`), and active production systems (`/systems/`).",
+        "2. **Theoretical Concepts & Architectural Models**: Foundational concepts, thematic clusters, and relational graphs (`/concepts/`).",
+        "3. **\"What Could Be\"**: Visual storyboards (`/storyboards/`), emerging innovations, exploratory prototypes, and horizon scanning (`/frontier/`).",
+        "4. **\"How To\" & Provenance**: Operational runbooks (`/playbooks/`), field research (`/research/`), and standards (`/references/`).",
         "",
         "---",
         ""
@@ -171,9 +198,30 @@ def generate_index(bundle_dir: Path):
             total_indexed += len(items)
             lines.append(f"## {cat_title}")
             lines.append("")
-            for it in items:
-                lines.append(it)
-            lines.append("")
+            if cat_id == "concepts":
+                clusters = [it for it in items if "/cluster-" in it]
+                nodes = [it for it in items if "/cluster-" not in it]
+                
+                if clusters:
+                    lines.append("### Thematic Concept Clusters & Mind Maps")
+                    lines.append("")
+                    for it in clusters:
+                        lines.append(it)
+                    lines.append("")
+                    if nodes:
+                        lines.append("### Constituent Concept Nodes & Relational Edges")
+                        lines.append("")
+                        for it in nodes:
+                            lines.append(it)
+                        lines.append("")
+                else:
+                    for it in items:
+                        lines.append(it)
+                    lines.append("")
+            else:
+                for it in items:
+                    lines.append(it)
+                lines.append("")
             
     if unmapped_items:
         total_indexed += len(unmapped_items)
@@ -189,7 +237,17 @@ def generate_index(bundle_dir: Path):
 
 
 if __name__ == "__main__":
-    bundle_root = Path(__file__).resolve().parent.parent
-    if len(sys.argv) > 1:
-        bundle_root = Path(sys.argv[1]).resolve()
-    generate_index(bundle_root)
+    default_bundle_root = SCRIPT_DIR.parent
+    parser = argparse.ArgumentParser(
+        description="Dynamic generator and synchronizer for the OKF root index.md."
+    )
+    parser.add_argument(
+        "bundle_root",
+        nargs="?",
+        default=default_bundle_root,
+        type=Path,
+        help="Path to the OKF bundle root directory (default: repository root)",
+    )
+    args = parser.parse_args()
+    generate_index(args.bundle_root.resolve())
+

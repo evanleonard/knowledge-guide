@@ -23,3 +23,6 @@ venv/
 .vscode/
 *.swp
 *.swo
+
+# Local & Private Content (personal case history, local scratchpads, sensitive data)
+private/
