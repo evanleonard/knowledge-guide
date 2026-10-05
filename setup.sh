@@ -109,6 +109,13 @@ echo -e "\n${BLUE}[3/7]${NC} Checking version control tooling..."
 if command -v git &>/dev/null; then
     GIT_VER="$(git --version)"
     echo -e "      ${GREEN}✓${NC} Git found: ${GREEN}$GIT_VER${NC}"
+    GIT_EMAIL="$(git config user.email 2>/dev/null || echo "")"
+    if [ -n "$GIT_EMAIL" ]; then
+        echo -e "      ${GREEN}✓${NC} Git user.email configured: ${GREEN}$GIT_EMAIL${NC}"
+    else
+        echo -e "      ${YELLOW}!${NC} Git user.email not configured. To avoid GitHub email privacy blocks (GH007):"
+        echo -e "        ${BOLD}git config user.email \"<username>@users.noreply.github.com\"${NC}"
+    fi
 fi
 
 if command -v jj &>/dev/null; then
