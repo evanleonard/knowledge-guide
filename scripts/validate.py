@@ -578,7 +578,10 @@ def validate_bundle(bundle_dir: Path, fix: bool = False):
                 target = (file_path.parent / clean_link).resolve()
                 
             if not target.exists():
-                warnings.append(f"[{rel_path}] Broken link to '{link}'. Target does not exist.")
+                # Starter templates and skill templates contain illustrative example links for authors;
+                # exempt templates from target existence checks to prevent false positives when samples are removed.
+                if "templates" not in file_path.parts:
+                    warnings.append(f"[{rel_path}] Broken link to '{link}'. Target does not exist.")
 
     # Concept Graph Validation
     graph_stats = validate_concept_graph(bundle_dir, errors, warnings)

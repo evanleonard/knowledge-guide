@@ -1,6 +1,11 @@
 # Knowledge Base Changelog
 
 ## 2026-10-04
+* **Template Link Exemption & Onboarding Resilience**:
+  - **Template Link Verification**: Enhanced [`scripts/validate.py`](/scripts/validate.py) to exempt files in `templates/` and `*/templates/*` from destination existence checks, preventing false-positive "Broken link" warnings when adopters remove starter sample concepts.
+  - **Upstream & Sample Management in Init**: Enhanced [`scripts/init_repo.py`](/scripts/init_repo.py) to automatically write `upstream_repository` into `knowledge.config.json`, configure the `upstream` git remote pointing to `knowledge-guide.git`, and added `--clean-samples` and `--archive-samples` options for instant empty-canvas initialization.
+  - **Email Privacy Diagnostics & Push Resilience**: Enhanced [`scripts/publish_changes.py`](/scripts/publish_changes.py) to intercept GitHub `GH007` private email push rejections and provide plain-language recovery steps, and updated [`setup.sh`](/setup.sh) to verify `git user.email` configuration.
+
 * **Plain Language Publishing, Sharing & Content Checking**:
   - **Publish & Share Engine**: Added [`scripts/publish_changes.py`](/scripts/publish_changes.py) translating everyday phrases like *"share my changes"*, *"publish my updates"*, *"save and share"*, *"push my notes"*, and *"publish this page"* into verified Git commits and pushes with presubmit gatekeeping and automatic conflict-free teammate sync.
   - **Content & Team Updates Checker**: Added [`scripts/check_changes.py`](/scripts/check_changes.py) providing non-technical inspection of collaborator commits on `origin/main`, local working drafts, and recent changelog additions in `log.md` without Git jargon.

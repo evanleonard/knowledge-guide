@@ -3,6 +3,7 @@
   "kb_title": "Organization Knowledge Base",
   "kb_description": "Canonical Open Knowledge Format (OKF v0.2) repository: separating operational & system reality ('What Is') from proposed product innovations ('What Could Be').",
   "okf_version": "0.2",
+  "upstream_repository": "https://github.com/evanleonard/knowledge-guide.git",
   "categories": [
     {
       "id": "systems",

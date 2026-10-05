@@ -160,7 +160,23 @@ def publish(repo_root: Path, message: Optional[str] = None, dry_run: bool = Fals
     print(f"📤 Sharing changes to GitHub (origin/{branch})...")
     code, out, err = run_cmd(["git", "push", "origin", branch], repo_root)
     if code != 0:
-        print(f"❌ Failed to share changes to GitHub: {err}")
+        if "GH007" in err or "push declined due to email privacy restrictions" in err:
+            print("\n❌ Push declined by GitHub due to private email restrictions (GH007).")
+            print("\n💡 Resolution:")
+            print("  GitHub's 'Block command line pushes that expose my email' setting is enabled.")
+            print("  Configure your local git user.email with your GitHub-provided noreply email address:")
+            print("    git config user.email \"<your-username>@users.noreply.github.com\"")
+            print("    git commit --amend --reset-author --no-edit")
+            print("    ./scripts/publish_changes.py\n")
+        elif "Permission denied (publickey)" in err:
+            print("\n❌ Push failed due to SSH key authentication failure.")
+            print("\n💡 Resolution:")
+            print("  Ensure your SSH key is added to ssh-agent, or switch remote to HTTPS:")
+            print("    ssh-add ~/.ssh/id_ed25519")
+            print("    # Or use HTTPS with GitHub CLI credential helper:")
+            print("    git remote set-url origin https://github.com/<owner>/<repo>.git\n")
+        else:
+            print(f"❌ Failed to share changes to GitHub: {err}")
         return 1
 
     # 7. Print friendly confirmation
