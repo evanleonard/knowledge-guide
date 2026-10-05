@@ -120,6 +120,7 @@ def infer_doc_type(rel_path: Path) -> str:
             "concepts": "Concept",
             "frontier": "Frontier Exploration",
             "storyboards": "Product Storyboard",
+            "podcasts": "Podcast Episode",
             "playbooks": "Playbook",
             "research": "Research Notes",
             "interviews": "Interview Notes",

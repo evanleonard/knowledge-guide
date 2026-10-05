@@ -36,6 +36,12 @@
       "description": "Sequential visual narrative storyboards illustrating product features, user journeys, and partner integrations."
     },
     {
+      "id": "podcasts",
+      "title": "Audio Overviews & Podcasts ('What Could Be')",
+      "path_prefix": "podcasts/",
+      "description": "NotebookLM-style two-host deep dive audio overviews, conversational breakdowns, and synthetic podcast episodes."
+    },
+    {
       "id": "playbooks",
       "title": "Operational Playbooks & Runbooks",
       "path_prefix": "playbooks/",

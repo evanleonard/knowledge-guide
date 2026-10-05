@@ -18,8 +18,10 @@ venv/
 .obsidian/workspace.json
 .obsidian/workspace-mobile.json
 
-# IDE / Editor
-.idea/
-.vscode/
-*.swp
-*.swo
+# Environment & API Keys
+.env
+.env.*
+*.env
+
+# Audio cache & clips
+*.aiff

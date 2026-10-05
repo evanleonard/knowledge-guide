@@ -51,6 +51,7 @@ The single source of truth for all architectural, statutory, and operational req
 * `concepts/`: Theoretical ideas, architectural constructs, thematic clusters, foundational models.
 * `frontier/`: "What Could Be" — Emerging ideas, horizon-scanning proposals, exploratory prototypes, and experimental initiatives.
 * `storyboards/`: "What Could Be" — Sequential visual narrative storyboards illustrating product features and user journeys.
+* `podcasts/`: "What Could Be" — NotebookLM-style two-host audio overviews, conversational deep dives, and synthetic podcast episodes.
 * `playbooks/`: Operational runbooks, developer setup guides, team SOPs.
 * `research/`: Customer discovery interviews, user observations, qualitative feedback.
 * `references/`: Format standards, schemas, data dictionaries, provenance guidelines.
@@ -67,6 +68,7 @@ When interacting with the user or executing complex tasks, use these registered 
 * `/manage-knowledge-base`: Validate, author, update the OKF bundle, check for team updates, or publish/share notes.
 * `/ingest <url>`: Ingest external web content, specifications, or policies into OKF format.
 * `/generate-storyboards`: Author multi-panel visual storyboards and product concept specifications.
+* `/create-podcast`: Generate NotebookLM-style two-host deep dive audio overviews, conversational podcast episodes, and interactive web audio players from knowledge base sources.
 * `/backout-source <target>`: Audit, retract, substitute, or decouple any external source, paper, or institutional container.
 * `/backout-institution <name>`: Audit, retract, and safely decouple an institution, its sources, and dependent concepts.
 * `/upgrade-guide`: Upgrade the knowledge base software, tooling, skills, and dependencies from the upstream repository without requiring git knowledge.

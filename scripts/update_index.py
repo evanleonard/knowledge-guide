@@ -54,6 +54,12 @@ DEFAULT_CONFIG = {
             "description": "Sequential visual narrative storyboards illustrating product features, user journeys, and partner integrations."
         },
         {
+            "id": "podcasts",
+            "title": "Audio Overviews & Podcasts ('What Could Be')",
+            "path_prefix": "podcasts/",
+            "description": "NotebookLM-style two-host deep dive audio overviews, conversational breakdowns, and synthetic podcast episodes."
+        },
+        {
             "id": "playbooks",
             "title": "Operational Playbooks & Runbooks",
             "path_prefix": "playbooks/",
@@ -171,7 +177,7 @@ def generate_index(bundle_dir: Path):
         "Knowledge in this bundle is organized with clear demarcation between:",
         "1. **\"What Is\"**: Operational realities, external ecosystem context (`/ecosystem/`), key institutions (`/ecosystem/institutions/`), and active production systems (`/systems/`).",
         "2. **Theoretical Concepts & Architectural Models**: Foundational concepts, thematic clusters, and relational graphs (`/concepts/`).",
-        "3. **\"What Could Be\"**: Visual storyboards (`/storyboards/`), emerging innovations, exploratory prototypes, and horizon scanning (`/frontier/`).",
+        "3. **\"What Could Be\"**: Visual storyboards (`/storyboards/`), audio overviews (`/podcasts/`), emerging innovations, exploratory prototypes, and horizon scanning (`/frontier/`).",
         "4. **\"How To\" & Provenance**: Operational runbooks (`/playbooks/`), field research (`/research/`), and standards (`/references/`).",
         "",
         "---",
